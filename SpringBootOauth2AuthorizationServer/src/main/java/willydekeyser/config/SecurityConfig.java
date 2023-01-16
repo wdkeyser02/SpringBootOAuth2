@@ -41,10 +41,12 @@ public class SecurityConfig {
 	@Bean
 	@Order(1)
 	public SecurityFilterChain asSecurityFilterChain(HttpSecurity http) throws Exception {
+		
 		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
 		http.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(Customizer.withDefaults());
-		http.exceptionHandling(e -> e.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")));
+		http.exceptionHandling(e -> e
+				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")));
 
 		return http.build();
 	}
@@ -52,15 +54,20 @@ public class SecurityConfig {
 	@Bean
 	@Order(2)
 	public SecurityFilterChain appSecurityFilterChain(HttpSecurity http) throws Exception {
-		http.formLogin().and().authorizeHttpRequests().anyRequest().authenticated();
+		http
+		.formLogin()
+		.and()
+		.authorizeHttpRequests().anyRequest().authenticated();
 		return http.build();
 	}
 
 	@Bean
 	public UserDetailsService userDetailsService() {
-		var u1 = User.withUsername("user").password("password").authorities("read").build();
-
-		return new InMemoryUserDetailsManager(u1);
+		var user1 = User.withUsername("user")
+				.password("password")
+				.authorities("read")
+				.build();
+		return new InMemoryUserDetailsManager(user1);
 	}
 
 	@Bean
