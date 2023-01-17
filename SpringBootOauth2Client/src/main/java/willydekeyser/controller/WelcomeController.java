@@ -9,7 +9,7 @@ public class WelcomeController {
 	@GetMapping("/")
 	public String welcome() {
 
-		return "<h1>Welcome! </h1>";
+		return "<h1>Welcome!</h1>";
 	}
 	
 }
