@@ -51,7 +51,7 @@ public class SecurityConfig {
 				.and()
 				.exceptionHandling(e -> e
 				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
-				//.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 				.build();
 
 	}
@@ -85,10 +85,13 @@ public class SecurityConfig {
 		RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
 				.clientId("client")
 				.clientSecret("secret")
+				.scope("read")
 				.scope(OidcScopes.OPENID)
+				.scope(OidcScopes.PROFILE)
 				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/myoauth2")
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 				.build();
 
 		return new InMemoryRegisteredClientRepository(registeredClient);
@@ -99,7 +102,7 @@ public class SecurityConfig {
 		return AuthorizationServerSettings.builder().build();
 	}
 	
-	//@Bean 
+	@Bean 
 	public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
 		return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
 	}

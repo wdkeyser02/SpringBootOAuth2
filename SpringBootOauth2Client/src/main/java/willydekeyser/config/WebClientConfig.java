@@ -2,33 +2,30 @@ package willydekeyser.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
-import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import lombok.RequiredArgsConstructor;
 
-//@Configuration
+@Configuration
 @RequiredArgsConstructor
 public class WebClientConfig {
 
-	private final ClientRegistrationRepository clientRegistrationRepository;
-	private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
+	//private final ClientRegistrationRepository clientRegistrationRepository;
+	//private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
 	
-	//@Bean
+	@Bean
 	public WelcomeClient welcomeClient() throws Exception {
 		return httpServiceProxyFactory().createClient(WelcomeClient.class);
 	}
 	
 	private HttpServiceProxyFactory httpServiceProxyFactory() {
-		ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 = new ServletOAuth2AuthorizedClientExchangeFilterFunction(
-				clientRegistrationRepository, oAuth2AuthorizedClientRepository);
-		oauth2.setDefaultOAuth2AuthorizedClient(true);
+		//ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 = new ServletOAuth2AuthorizedClientExchangeFilterFunction(
+		//		clientRegistrationRepository, oAuth2AuthorizedClientRepository);
+		//oauth2.setDefaultOAuth2AuthorizedClient(true);
 		WebClient webClient = WebClient.builder()
-				.apply(oauth2.oauth2Configuration())			
+		//		.apply(oauth2.oauth2Configuration())			
 				.build();
 		WebClientAdapter client = WebClientAdapter.forClient(webClient);
 		return HttpServiceProxyFactory.builder(client).build();
