@@ -51,7 +51,7 @@ public class SecurityConfig {
 				.and()
 				.exceptionHandling(e -> e
 				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
-				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+				//.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 				.build();
 
 	}
@@ -99,7 +99,7 @@ public class SecurityConfig {
 		return AuthorizationServerSettings.builder().build();
 	}
 	
-	@Bean 
+	//@Bean 
 	public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
 		return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
 	}
