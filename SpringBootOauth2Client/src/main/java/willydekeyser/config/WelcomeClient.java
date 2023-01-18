@@ -1,8 +1,5 @@
 package willydekeyser.config;
 
-import java.util.Map;
-
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 
@@ -11,7 +8,7 @@ import org.springframework.web.service.annotation.HttpExchange;
 public interface WelcomeClient {
 
 	@GetExchange("/")
-	String getWelcome(@RequestHeader Map<String, String> headers);
+	String getWelcome();
 	
 	
 }
