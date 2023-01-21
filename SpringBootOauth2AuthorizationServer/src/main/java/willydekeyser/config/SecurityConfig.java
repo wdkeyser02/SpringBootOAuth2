@@ -95,7 +95,6 @@ public class SecurityConfig {
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 				.clientSettings(clientSettings())
-				.tokenSettings(tokenSettings())
 				.build();
 
 		return new InMemoryRegisteredClientRepository(registeredClient);
@@ -105,16 +104,10 @@ public class SecurityConfig {
 	public AuthorizationServerSettings authorizationServerSettings() {
 		return AuthorizationServerSettings.builder().build();
 	}
-	
-	@Bean
-	TokenSettings tokenSettings() {
-		return TokenSettings.builder().build();
-	}
-	
+		
 	@Bean
 	ClientSettings clientSettings() {
 		return ClientSettings.builder()
-				.requireAuthorizationConsent(false)
 				.requireProofKey(true)
 				.build();
 	}
