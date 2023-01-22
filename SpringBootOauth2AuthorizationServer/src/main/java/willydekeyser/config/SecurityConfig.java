@@ -75,11 +75,6 @@ public class SecurityConfig {
 		return new InMemoryUserDetailsManager(user1);
 	}
 
-	//@Bean
-	//public PasswordEncoder passwordEncoder() {
-	//	return NoOpPasswordEncoder.getInstance();
-	//}
-
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
