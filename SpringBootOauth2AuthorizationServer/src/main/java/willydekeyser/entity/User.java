@@ -41,9 +41,9 @@ public class User {
 
 	@Singular
 	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-	@JoinTable(name = "users_authority", joinColumns = {
+	@JoinTable(name = "users_authorities", joinColumns = {
 			@JoinColumn(name = "USERS_ID", referencedColumnName = "ID") }, inverseJoinColumns = {
-					@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID") })
+					@JoinColumn(name = "AUTHORITIES_ID", referencedColumnName = "ID") })
 	private Set<Authority> authorities;
 
 	@Builder.Default
