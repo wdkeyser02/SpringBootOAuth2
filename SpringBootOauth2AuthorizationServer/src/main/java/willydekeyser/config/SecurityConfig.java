@@ -13,8 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -28,7 +26,6 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
@@ -66,14 +63,14 @@ public class SecurityConfig {
 		
 	}
 
-	@Bean
-	public UserDetailsService userDetailsService() {
-		var user1 = User.withUsername("user")
-				.password(passwordEncoder().encode("password"))
-				.authorities("read")
-				.build();
-		return new InMemoryUserDetailsManager(user1);
-	}
+	//@Bean
+	//public UserDetailsService userDetailsService() {
+	//	var user1 = User.withUsername("user")
+	//			.password(passwordEncoder().encode("password"))
+	//			.authorities("read")
+	//			.build();
+	//	return new InMemoryUserDetailsManager(user1);
+	//}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
