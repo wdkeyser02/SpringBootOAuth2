@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import willydekeyser.entity.User;
 
 @RequiredArgsConstructor
-public class SecurityUser implements UserDetails {
+public class MyUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 	

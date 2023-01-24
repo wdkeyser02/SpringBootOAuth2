@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import willydekeyser.entity.User;
-import willydekeyser.model.SecurityUser;
+import willydekeyser.model.MyUserDetails;
 import willydekeyser.repository.UserRepository;
 
 @Service
@@ -21,7 +21,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> user = userRepository.findByUsername(username);
-	    return user.map(SecurityUser::new).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+	    return user.map(MyUserDetails::new).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 	}
 
 }
