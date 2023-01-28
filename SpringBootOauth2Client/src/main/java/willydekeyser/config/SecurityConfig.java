@@ -84,7 +84,7 @@ public class SecurityConfig {
 			Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
 			try {
 				JWT jwt = JWTParser.parse(accessToken.getTokenValue());
-				Collection<String> claims = (Collection<String>) jwt.getJWTClaimsSet().toJSONObject().get("authorities");
+				Collection<String> claims = (Collection<String>) jwt.getJWTClaimsSet().getClaim("authorities");
 				mappedAuthorities.addAll(claims.stream()
 						.map(SimpleGrantedAuthority::new)
 						.toList());         
