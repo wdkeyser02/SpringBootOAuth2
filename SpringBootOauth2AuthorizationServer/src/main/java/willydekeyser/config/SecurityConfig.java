@@ -22,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
-import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -109,15 +108,16 @@ public class SecurityConfig {
 	OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
 		return context -> {
 			Authentication principal = context.getPrincipal();
+			Set<String> authorities = principal.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
 			if (context.getTokenType().getValue().equals("id_token")) {
-				context.getClaims().claim("Test", "Test Id Token");
+				context.getClaims().claim("Test", "Test Id Token")
+				.claim("authorities", authorities)
+                .claim("user", principal.getName());
 			}
 			if (context.getTokenType().getValue().equals("access_token")) {
 				context.getClaims().claim("Test", "Test Access Token");
-				Set<String> authorities = principal.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-                context.getClaims().claim("authorities", authorities)
-                        .claim("user", principal.getName());
+                context.getClaims().claim("authorities", authorities);
 			}
 			
 		};

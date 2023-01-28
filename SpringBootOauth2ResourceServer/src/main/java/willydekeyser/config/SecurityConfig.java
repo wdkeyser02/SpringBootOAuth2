@@ -26,7 +26,7 @@ public class SecurityConfig {
 	}
 	
 	@Bean
-	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+	JwtAuthenticationConverter jwtAuthenticationConverter() {
 	    JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 	    grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
 	    grantedAuthoritiesConverter.setAuthorityPrefix("");
@@ -35,4 +35,5 @@ public class SecurityConfig {
 	    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
 	    return jwtAuthenticationConverter;
 	}
+		
 }
