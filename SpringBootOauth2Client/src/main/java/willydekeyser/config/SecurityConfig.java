@@ -5,6 +5,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.text.ParseException;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 
 @Configuration
@@ -52,7 +54,6 @@ public class SecurityConfig {
 		return http.build();
 	}
 	
-	@SuppressWarnings("unchecked")
 	//@Bean
 	GrantedAuthoritiesMapper userAuthoritiesMapper() {
 		return (authorities) -> {
@@ -62,7 +63,7 @@ public class SecurityConfig {
 					OidcUserAuthority oidcUserAuthority = (OidcUserAuthority)authority;
 					OidcIdToken idToken = oidcUserAuthority.getIdToken();
 					if (idToken.hasClaim("authorities")) {
-						Collection<String> userAuthorities = (Collection<String>) idToken.getClaim("authorities");
+						Collection<String> userAuthorities = idToken.getClaimAsStringList("authorities");
 						mappedAuthorities.addAll(userAuthorities.stream()
 										.map(SimpleGrantedAuthority::new)
 										.toList());
@@ -73,23 +74,23 @@ public class SecurityConfig {
 		};
 	}
 	
-	@SuppressWarnings("unchecked")
 	private OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
 		final OidcUserService delegate = new OidcUserService();
 
 		return (userRequest) -> {
 			OidcUser oidcUser = delegate.loadUser(userRequest);
 			OAuth2AccessToken accessToken = userRequest.getAccessToken();
-			//OidcIdToken idToken = userRequest.getIdToken();
+			// OidcIdToken idToken = userRequest.getIdToken();
 			Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
 			try {
 				JWT jwt = JWTParser.parse(accessToken.getTokenValue());
-				Collection<String> claims = (Collection<String>) jwt.getJWTClaimsSet().getClaim("authorities");
-				mappedAuthorities.addAll(claims.stream()
+				JWTClaimsSet claimSet = jwt.getJWTClaimsSet();
+				Collection<String> userAuthorities = claimSet.getStringListClaim("authorities");
+				mappedAuthorities.addAll(userAuthorities.stream()
 						.map(SimpleGrantedAuthority::new)
-						.toList());         
-			} catch (Exception e) {
-				e.printStackTrace();
+						.toList());
+			} catch (ParseException e) {
+				System.err.println("Error OAuth2UserService: " + e.getMessage());
 			}
 			oidcUser = new DefaultOidcUser(mappedAuthorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
 			return oidcUser;
