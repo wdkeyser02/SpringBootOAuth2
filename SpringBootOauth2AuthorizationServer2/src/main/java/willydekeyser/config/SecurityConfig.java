@@ -68,7 +68,7 @@ public class SecurityConfig {
 
 	@Bean
 	public UserDetailsService userDetailsService() {
-		var user1 = User.withUsername("user")
+		var user1 = User.withUsername("user2")
 				.password("password")
 				.authorities("read")
 				.build();
@@ -88,7 +88,7 @@ public class SecurityConfig {
 				.scope("read")
 				.scope(OidcScopes.OPENID)
 				.scope(OidcScopes.PROFILE)
-				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/myoauth2")
+				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/myoauth2server2")
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)

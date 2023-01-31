@@ -14,9 +14,12 @@ public class SecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests(authorize -> authorize
+					.requestMatchers("/").permitAll()
 					.anyRequest().authenticated())
 			.oauth2Login(oauth2Login ->
-				oauth2Login.loginPage("/oauth2/authorization/myoauth2"))
+				oauth2Login.loginPage("/oauth2/authorization/myoauth2server1")
+				.loginPage("/oauth2/authorization/myoauth2server2")
+				.defaultSuccessUrl("/welcome"))
 			.oauth2Client(withDefaults());
 		return http.build();
 	}
