@@ -54,33 +54,12 @@ public class SecurityConfig {
 		return http.build();
 	}
 	
-	//@Bean
-	GrantedAuthoritiesMapper userAuthoritiesMapper() {
-		return (authorities) -> {
-			Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
-			authorities.forEach(authority -> {
-				if (OidcUserAuthority.class.isInstance(authority)) {
-					OidcUserAuthority oidcUserAuthority = (OidcUserAuthority)authority;
-					OidcIdToken idToken = oidcUserAuthority.getIdToken();
-					if (idToken.hasClaim("authorities")) {
-						Collection<String> userAuthorities = idToken.getClaimAsStringList("authorities");
-						mappedAuthorities.addAll(userAuthorities.stream()
-										.map(SimpleGrantedAuthority::new)
-										.toList());
-					}
-				}
-			});
-			return mappedAuthorities;
-		};
-	}
-	
 	private OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
 		final OidcUserService delegate = new OidcUserService();
 
 		return (userRequest) -> {
 			OidcUser oidcUser = delegate.loadUser(userRequest);
 			OAuth2AccessToken accessToken = userRequest.getAccessToken();
-			// OidcIdToken idToken = userRequest.getIdToken();
 			Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
 			try {
 				JWT jwt = JWTParser.parse(accessToken.getTokenValue());
