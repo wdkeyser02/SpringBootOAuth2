@@ -17,34 +17,22 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-	//@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-	//String issuerUri;
-
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		
-
 		Map<String, AuthenticationManager> authenticationManagers = new HashMap<>();
 		JwtIssuerAuthenticationManagerResolver authenticationManagerResolver = new JwtIssuerAuthenticationManagerResolver(authenticationManagers::get);
 		
 		List<String> issuers = new ArrayList<>();
 		  issuers.add("http://localhost:9000");
 		  issuers.add("http://localhost:9001");
-
 		  issuers.stream().forEach(issuer -> addManager(authenticationManagers, issuer));
-		
-		
-		
-		
-		
-		
-		
+		  
 		return http
 				.authorizeHttpRequests(auth -> auth
 						.anyRequest().authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2
 						.authenticationManagerResolver(authenticationManagerResolver))
-						//.jwt(jwt -> jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))))
 				.build();
 	}
 	
