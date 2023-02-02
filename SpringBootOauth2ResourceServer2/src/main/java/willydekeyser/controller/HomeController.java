@@ -11,7 +11,7 @@ public class HomeController {
 	@GetMapping("/")
 	public String home() {
 		LocalDateTime time = LocalDateTime.now();
-		return "Spring Resouce Server 01 - " + time;
+		return "Spring Resouce Server 02 - " + time;
 	}
 
 }
