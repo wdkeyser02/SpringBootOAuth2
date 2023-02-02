@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import willydekeyser.config.WelcomeClient;
+import willydekeyser.config.WelcomeClient2;
 
 
 @RestController
@@ -13,11 +14,13 @@ import willydekeyser.config.WelcomeClient;
 public class WelcomeController {
 	
 	private final WelcomeClient welcomeClient;
+	private final WelcomeClient2 welcomeClient2;
 	
 	@GetMapping("/")
 	public String index(Authentication authentication) {
 		String welcome = welcomeClient.getWelcome();
-		return "<h1> Welcome: " + authentication.getName() + "</h1><h2>" + welcome + "</h2>";
+		String welcome2 = welcomeClient2.getWelcome();
+		return "<h1> Welcome: " + authentication.getName() + "</h1><h2>" + welcome + "</h2><h2>" + welcome2 + "</h2>";
 	}
 		
 }
