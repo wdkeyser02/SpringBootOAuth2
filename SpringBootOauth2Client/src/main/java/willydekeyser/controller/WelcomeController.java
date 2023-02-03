@@ -2,6 +2,7 @@ package willydekeyser.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+//import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -20,6 +21,11 @@ public class WelcomeController {
 	private final WelcomeClient welcomeClient;
 	private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 	
+	//public WelcomeController(WelcomeClient welcomeClient, OAuth2AuthorizedClientService oAuth2AuthorizedClientService) {
+	//	this.welcomeClient = welcomeClient;
+	//	this.oAuth2AuthorizedClientService = oAuth2AuthorizedClientService;
+	//}
+	
 	@GetMapping("/")
 	public String welcome(Authentication authentication) {
 		
@@ -30,6 +36,9 @@ public class WelcomeController {
 	
 	@GetMapping("/token")
 	public String token(Authentication authentication) {
+		
+		//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
 		OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
 		OAuth2AuthorizedClient oAuth2AuthorizedClient = oAuth2AuthorizedClientService
 				.loadAuthorizedClient(oAuth2AuthenticationToken.getAuthorizedClientRegistrationId(), oAuth2AuthenticationToken.getName());
@@ -44,5 +53,5 @@ public class WelcomeController {
 		String idTokenValue = oidcIdToken.getTokenValue();
 		return "<b>Id Token: </b>" + idTokenValue;
 	}
-	
+
 }
