@@ -11,6 +11,12 @@ public class SecurityConfig {
 
 	@Value("${spring.security.oauth2.resourceserver.opaque.issuer-uri}")
 	String issuerUri;
+	
+	@Value("${spring.security.oauth2.resourceserver.opaque.client}")
+	String client;
+	
+	@Value("${spring.security.oauth2.resourceserver.opaque.secret}")
+	String secret;
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -20,7 +26,7 @@ public class SecurityConfig {
 				.oauth2ResourceServer(oauth2 -> oauth2
 						.opaqueToken()
 						.introspectionUri(issuerUri)
-						.introspectionClientCredentials("client", "secret")
+						.introspectionClientCredentials(client, secret)
 						)
 				.build();
 	}
