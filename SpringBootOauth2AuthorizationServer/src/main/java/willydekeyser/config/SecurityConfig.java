@@ -6,11 +6,15 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.core.userdetails.User;
@@ -19,8 +23,14 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -30,8 +40,14 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.DelegatingOAuth2TokenGenerator;
+import org.springframework.security.oauth2.server.authorization.token.JwtGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2AccessTokenGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2RefreshTokenGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 import com.nimbusds.jose.jwk.JWKSet;
@@ -50,13 +66,31 @@ public class SecurityConfig {
 		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
 		return http
-				.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(withDefaults())
+				.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+				.tokenEndpoint(tokenEndpoint -> tokenEndpoint
+					.accessTokenRequestConverter(new JwtBearerGrantAuthenticationConverter())
+					.accessTokenRequestConverters(getConverters())
+					.authenticationProviders(getProviders())
+					.authenticationProvider(new JwtBearerGrantAuthenticationProvider(authorizationService(), tokenGenerator())))
+				.oidc(withDefaults())
 				.and()
 				.exceptionHandling(e -> e
 				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
 				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 				.build();
 
+	}
+
+	private Consumer<List<AuthenticationProvider>> getProviders() {
+		return convert -> {
+			convert.forEach(a -> System.err.println("Provider: " + a.toString()));
+		};
+	}
+
+	private Consumer<List<AuthenticationConverter>> getConverters() {
+		return convert -> {
+			convert.forEach(a -> System.err.println("Converter: " + a.toString()));
+		};
 	}
 
 	@Bean
@@ -69,6 +103,26 @@ public class SecurityConfig {
 		
 	}
 
+	@Bean
+	public OAuth2AuthorizationService authorizationService() {
+		return new InMemoryOAuth2AuthorizationService();
+	}
+	
+	@Bean
+	OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService() {
+		return new InMemoryOAuth2AuthorizationConsentService();
+	}
+	
+	@Bean
+	public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator() {
+		NimbusJwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkSource());
+		JwtGenerator jwtGenerator = new JwtGenerator(jwtEncoder);
+		OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
+		OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
+		return new DelegatingOAuth2TokenGenerator(
+				jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
+	}
+	
 	@Bean
 	public UserDetailsService userDetailsService() {
 		var user1 = User.withUsername("user")
@@ -85,16 +139,22 @@ public class SecurityConfig {
 
 	@Bean
 	public RegisteredClientRepository registeredClientRepository() {
-		RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+		RegisteredClient registeredClient = RegisteredClient.withId("client")
 				.clientId("client")
 				.clientSecret("secret")
 				.scope("read")
 				.scope(OidcScopes.OPENID)
 				.scope(OidcScopes.PROFILE)
+				.scope("message.read")
+				.scope("message.write")
 				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/myoauth2")
+				.redirectUri("http://insomnia")
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+				.authorizationGrantType(AuthorizationGrantType.JWT_BEARER)
+				.authorizationGrantType(AuthorizationGrantType.PASSWORD)
 				.tokenSettings(tokenSettings())
 				.clientSettings(clientSettings())
 				.build();
@@ -105,7 +165,8 @@ public class SecurityConfig {
 	@Bean
 	TokenSettings tokenSettings() {
 		return TokenSettings.builder()
-				.accessTokenFormat(OAuth2TokenFormat.REFERENCE)
+				.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+				.accessTokenTimeToLive(Duration.ofDays(1))
 				.build();
 	}
 	
