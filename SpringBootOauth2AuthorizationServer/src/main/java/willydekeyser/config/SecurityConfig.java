@@ -136,6 +136,7 @@ public class SecurityConfig {
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 				.authorizationGrantType(AuthorizationGrantType.JWT_BEARER)
+				.authorizationGrantType(new AuthorizationGrantType("custom_password"))
 				.tokenSettings(tokenSettings())
 				.clientSettings(clientSettings())
 				.build();
