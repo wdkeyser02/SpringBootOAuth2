@@ -45,11 +45,7 @@ public final class JwtBearerGrantAuthenticationProvider implements Authenticatio
 		OAuth2ClientAuthenticationToken clientPrincipal = getAuthenticatedClientElseThrowInvalidClient(jwtBearerGrantAuthentication);
 		RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
 		OAuth2Authorization authorization = this.authorizationService.findByToken(jwtBearerGrantAuthentication.getAssertion(), OAuth2TokenType.ACCESS_TOKEN);
-		
-		System.out.println("\nJwtBearerGrantAuthenticationProvider: " + clientPrincipal.getName());
-		registeredClient.getAuthorizationGrantTypes().forEach(a -> System.err.println(a.getValue()));
-		System.out.println("\n\n");
-		
+			
 		if (authorization == null) {
 			throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_GRANT);
 		}
@@ -107,13 +103,11 @@ public final class JwtBearerGrantAuthenticationProvider implements Authenticatio
 
 		authorization = authorizationBuilder.build();
 		this.authorizationService.save(authorization);
-		System.err.println("\n\nJwtBearerGrantAuthenticationProvider ACCESS TOKEN: " + accessToken.getTokenValue());
 		return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken);
 	}
 
 	@Override
 	public boolean supports(Class<?> authentication) {
-		System.out.println("\n\nsupports(Class<?> authentication: " + authentication);
 		return JwtBearerGrantAuthenticationToken.class.isAssignableFrom(authentication);
 	}
 

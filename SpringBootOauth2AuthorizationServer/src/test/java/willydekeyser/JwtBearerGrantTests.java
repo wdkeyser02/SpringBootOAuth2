@@ -30,8 +30,8 @@ import org.springframework.test.web.servlet.MvcResult;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class JwtBearerGrantTests {
+	
 	private static final String DEFAULT_TOKEN_ENDPOINT_URI = "/oauth2/token";
-
 	private static final HttpMessageConverter<OAuth2AccessTokenResponse> accessTokenHttpResponseConverter =
 			new OAuth2AccessTokenResponseHttpMessageConverter();
 
@@ -41,7 +41,7 @@ public class JwtBearerGrantTests {
 	@Test
 	public void exchangeAccessTokenUsingJwtBearerGrant() throws Exception {
 		
-		System.err.println("Start JwtBearerGrantTests");
+		System.err.println("\nStart JwtBearerGrantTests\n");
 		
 		// Obtain access token using 'client_credentials' grant
 		MvcResult mvcResult = this.mvc.perform(post(DEFAULT_TOKEN_ENDPOINT_URI)
@@ -53,7 +53,7 @@ public class JwtBearerGrantTests {
 				.andReturn();
 
 		String accessToken = getAccessToken(mvcResult).getTokenValue();
-		System.err.println("Access token from 'client_credentials' grant -> " + accessToken);
+		System.err.println("\nAccess token from 'client_credentials' grant -> " + accessToken);
 
 		// Exchange access token using 'jwt-bearer' grant
 		mvcResult = this.mvc.perform(post(DEFAULT_TOKEN_ENDPOINT_URI)
@@ -66,9 +66,9 @@ public class JwtBearerGrantTests {
 				.andReturn();
 
 		accessToken = getAccessToken(mvcResult).getTokenValue();
-		System.err.println("Access token from 'jwt-bearer' grant -> " + accessToken);
+		System.err.println("\nAccess token from 'jwt-bearer' grant -> " + accessToken);
 			
-		System.err.println("End JwtBearerGrantTests");
+		System.err.println("\nEnd JwtBearerGrantTests");
 	}
 
 	private static OAuth2AccessToken getAccessToken(MvcResult mvcResult) {

@@ -26,10 +26,9 @@ public final class JwtBearerGrantAuthenticationConverter implements Authenticati
 	@Nullable
 	@Override
 	public Authentication convert(HttpServletRequest request) {
+		
 		// grant_type (REQUIRED)
 		String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
-		
-		System.out.println("\nJwtBearerGrantAuthenticationConverter: " + grantType);
 		
 		if (!AuthorizationGrantType.JWT_BEARER.getValue().equals(grantType)) {
 			return null;
@@ -67,8 +66,6 @@ public final class JwtBearerGrantAuthenticationConverter implements Authenticati
 
 		Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();
 
-		System.err.println("\n\nJwtBearerGrantAuthenticationConverter Authentication: " + clientPrincipal);
-		
 		return new JwtBearerGrantAuthenticationToken(
 				assertion, clientPrincipal, requestedScopes, additionalParameters);
 	}
