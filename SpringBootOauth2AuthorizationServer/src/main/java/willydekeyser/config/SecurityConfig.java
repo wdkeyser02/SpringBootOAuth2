@@ -64,8 +64,8 @@ public class SecurityConfig {
 		return http
 				.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
 				.tokenEndpoint(tokenEndpoint -> tokenEndpoint
-					.accessTokenRequestConverter(new JwtBearerGrantAuthenticationConverter())
-					.authenticationProvider(new JwtBearerGrantAuthenticationProvider(authorizationService(), tokenGenerator())))
+					.accessTokenRequestConverter(new CustomPassordAuthenticationConverter())
+					.authenticationProvider(new CustomPassordAuthenticationProvider(authorizationService(), tokenGenerator(), userDetailsService())))
 				.oidc(withDefaults())
 				.and()
 				.exceptionHandling(e -> e
@@ -109,7 +109,7 @@ public class SecurityConfig {
 	public UserDetailsService userDetailsService() {
 		var user1 = User.withUsername("user")
 				.password("password")
-				.authorities("read")
+				.authorities("read", "test")
 				.build();
 		return new InMemoryUserDetailsManager(user1);
 	}
