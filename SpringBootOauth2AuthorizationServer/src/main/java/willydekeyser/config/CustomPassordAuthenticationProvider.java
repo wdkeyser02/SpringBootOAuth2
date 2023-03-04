@@ -2,11 +2,11 @@ package willydekeyser.config;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -82,12 +82,11 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 		if (!user.getPassword().equals(password) || ! user.getUsername().equals(username)) {
 			throw new OAuth2AuthenticationException(OAuth2ErrorCodes.ACCESS_DENIED);
 		}
-		for (GrantedAuthority authority : user.getAuthorities()) {
-			if (registeredClient.getScopes().contains(authority.getAuthority())) {
-				authorizedScopes.add(authority.getAuthority());	
-			}
-		}
-	
+		authorizedScopes = user.getAuthorities().stream()
+				.map(scope -> scope.getAuthority())
+				.filter(scope -> registeredClient.getScopes().contains(scope))
+				.collect(Collectors.toSet());
+				
 		DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
 				.registeredClient(registeredClient)
 				.principal(clientPrincipal)
