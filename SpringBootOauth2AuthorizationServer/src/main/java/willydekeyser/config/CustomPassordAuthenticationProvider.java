@@ -4,11 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -50,6 +48,7 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 	private final UserDetailsService userDetailsService;
 	private final JWKSource<SecurityContext> jwkSource;
 	private String username = "";
+	private String password = "";
 	private Set<String> authorizedScopes = new HashSet<>();
 
 	public CustomPassordAuthenticationProvider(OAuth2AuthorizationService authorizationService,
@@ -69,26 +68,25 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 		CustomPasswordAuthenticationToken customPasswordAuthenticationToken = (CustomPasswordAuthenticationToken) authentication;
 		OAuth2ClientAuthenticationToken clientPrincipal = getAuthenticatedClientElseThrowInvalidClient(customPasswordAuthenticationToken);
 		RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
-		OAuth2Authorization authorization = this.authorizationService.findById("client");
+		OAuth2Authorization authorization = this.authorizationService.findById(registeredClient.getClientId());
 		username = customPasswordAuthenticationToken.getUsername();
-		String password = customPasswordAuthenticationToken.getPassword();
+		password = customPasswordAuthenticationToken.getPassword();
 				
 		User user = null;
 		try {
 			user = (User) userDetailsService.loadUserByUsername(username);
 		} catch (UsernameNotFoundException e) {
+			System.err.println(e.getMessage());
 			throw new OAuth2AuthenticationException(OAuth2ErrorCodes.ACCESS_DENIED);
 		}
-		if (!user.getPassword().equals(password)) {
+		if (!user.getPassword().equals(password) || ! user.getUsername().equals(username)) {
 			throw new OAuth2AuthenticationException(OAuth2ErrorCodes.ACCESS_DENIED);
 		}
 		for (GrantedAuthority authority : user.getAuthorities()) {
-			authorizedScopes.add(authority.getAuthority());	
+			if (registeredClient.getScopes().contains(authority.getAuthority())) {
+				authorizedScopes.add(authority.getAuthority());	
+			}
 		}
-			
-		var newContext = SecurityContextHolder.createEmptyContext();
-		newContext.setAuthentication(UsernamePasswordAuthenticationToken.authenticated(clientPrincipal, authorizedScopes, null));
-		
 	
 		DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
 				.registeredClient(registeredClient)
@@ -130,7 +128,6 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 						"The token generator failed to generate the refresh token.", ERROR_URI);
 				throw new OAuth2AuthenticationException(error);
 			}
-
 			refreshToken = (OAuth2RefreshToken) generatedRefreshToken;
 			authorizationBuilder.refreshToken(refreshToken);
 		}
