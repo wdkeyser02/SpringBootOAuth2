@@ -68,7 +68,7 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 		CustomPasswordAuthenticationToken customPasswordAuthenticationToken = (CustomPasswordAuthenticationToken) authentication;
 		OAuth2ClientAuthenticationToken clientPrincipal = getAuthenticatedClientElseThrowInvalidClient(customPasswordAuthenticationToken);
 		RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
-		OAuth2Authorization authorization = this.authorizationService.findById(registeredClient.getClientId());
+		//OAuth2Authorization authorization = this.authorizationService.findById(registeredClient.getClientId());
 		username = customPasswordAuthenticationToken.getUsername();
 		password = customPasswordAuthenticationToken.getPassword();
 				
@@ -92,9 +92,13 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 				.principal(clientPrincipal)
 				.authorizationServerContext(AuthorizationServerContextHolder.getContext())
 				.authorizedScopes(authorizedScopes)
-				.authorizationGrantType(new AuthorizationGrantType("custom_password"));
+				.authorizationGrantType(new AuthorizationGrantType("custom_password"))
+				.authorizationGrant(customPasswordAuthenticationToken);
 		
-		OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient);
+		OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
+				.principalName(clientPrincipal.getName())
+				.authorizationGrantType(new AuthorizationGrantType("custom_password"))
+				.authorizedScopes(authorizedScopes);
 		
 		//-----------ACCESS TOKEN----------
 		OAuth2TokenContext tokenContext = tokenContextBuilder.tokenType(OAuth2TokenType.ACCESS_TOKEN).build();
@@ -131,9 +135,9 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 			authorizationBuilder.refreshToken(refreshToken);
 		}
 				
-		authorization = authorizationBuilder
-				.principalName(clientPrincipal.getName())
-				.authorizationGrantType(new AuthorizationGrantType("custom_password"))
+		OAuth2Authorization authorization = authorizationBuilder
+				//.principalName(clientPrincipal.getName())
+				//.authorizationGrantType(new AuthorizationGrantType("custom_password"))
 				.build();
 		this.authorizationService.save(authorization);
 		return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken);

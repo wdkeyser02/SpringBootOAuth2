@@ -7,11 +7,14 @@ import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.core.userdetails.User;
@@ -37,6 +40,7 @@ import org.springframework.security.oauth2.server.authorization.settings.OAuth2T
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 import com.nimbusds.jose.jwk.JWKSet;
@@ -58,7 +62,9 @@ public class SecurityConfig {
 				.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
 				.tokenEndpoint(tokenEndpoint -> tokenEndpoint
 					.accessTokenRequestConverter(new CustomPassordAuthenticationConverter())
-					.authenticationProvider(new CustomPassordAuthenticationProvider(authorizationService(), jwkSource(), userDetailsService())))
+					.authenticationProvider(new CustomPassordAuthenticationProvider(authorizationService(), jwkSource(), userDetailsService()))
+					.accessTokenRequestConverters(getConverters())
+					.authenticationProviders(getProviders()))
 				.oidc(withDefaults())
 				.and()
 				.exceptionHandling(e -> e
@@ -67,6 +73,16 @@ public class SecurityConfig {
 				.build();
 
 	}
+
+	private Consumer<List<AuthenticationProvider>> getProviders() {
+		return a -> a.forEach(System.out::println);
+	}
+
+	private Consumer<List<AuthenticationConverter>> getConverters() {
+		return a -> a.forEach(System.out::println);
+	}
+
+
 
 	@Bean
 	@Order(2)
