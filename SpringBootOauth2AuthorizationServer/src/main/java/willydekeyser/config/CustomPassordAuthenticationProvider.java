@@ -1,5 +1,6 @@
 package willydekeyser.config;
 
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -96,6 +97,7 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 				.authorizationGrant(customPasswordAuthenticationToken);
 		
 		OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
+				.attribute(Principal.class.getName(), clientPrincipal)
 				.principalName(clientPrincipal.getName())
 				.authorizationGrantType(new AuthorizationGrantType("custom_password"))
 				.authorizedScopes(authorizedScopes);
