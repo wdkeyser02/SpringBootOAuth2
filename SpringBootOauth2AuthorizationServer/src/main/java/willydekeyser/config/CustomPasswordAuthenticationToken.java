@@ -9,7 +9,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationGrantAuthenticationToken;
-import org.springframework.util.Assert;
 
 public class CustomPasswordAuthenticationToken extends OAuth2AuthorizationGrantAuthenticationToken {
 
@@ -18,12 +17,11 @@ public class CustomPasswordAuthenticationToken extends OAuth2AuthorizationGrantA
 	private final String password;
 	private final Set<String> scopes;
 	
-	public CustomPasswordAuthenticationToken(String username, String password, Authentication clientPrincipal,
+	public CustomPasswordAuthenticationToken(Authentication clientPrincipal,
 			@Nullable Set<String> scopes, @Nullable Map<String, Object> additionalParameters) {
 		super(new AuthorizationGrantType("custom_password"), clientPrincipal, additionalParameters);
-		Assert.hasText(username, "assertion cannot be empty");
-		this.username = username;
-		this.password = password;
+		this.username = (String) additionalParameters.get("username");
+		this.password = (String) additionalParameters.get("password");
 		this.scopes = Collections.unmodifiableSet(
 				scopes != null ? new HashSet<>(scopes) : Collections.emptySet());
 	}

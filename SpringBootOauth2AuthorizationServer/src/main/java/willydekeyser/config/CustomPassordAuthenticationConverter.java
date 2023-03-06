@@ -49,7 +49,7 @@ public class CustomPassordAuthenticationConverter implements AuthenticationConve
 		
 		// password (REQUIRED)
 		String password = parameters.getFirst(OAuth2ParameterNames.PASSWORD);
-		if (!StringUtils.hasText(username) ||
+		if (!StringUtils.hasText(password) ||
 				parameters.get(OAuth2ParameterNames.PASSWORD).size() != 1) {
 			throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_REQUEST);
 		}
@@ -68,8 +68,8 @@ public class CustomPassordAuthenticationConverter implements AuthenticationConve
 			}
 		});
 		
-		Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();
-		return new CustomPasswordAuthenticationToken(username, password, clientPrincipal, requestedScopes, additionalParameters);
+		Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();	
+		return new CustomPasswordAuthenticationToken(clientPrincipal, requestedScopes, additionalParameters);
 	}
 
 	private static MultiValueMap<String, String> getParameters(HttpServletRequest request) {
