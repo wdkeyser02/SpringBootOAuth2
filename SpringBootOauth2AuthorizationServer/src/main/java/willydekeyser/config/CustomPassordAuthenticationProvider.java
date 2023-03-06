@@ -67,7 +67,6 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 		try {
 			user = (User) userDetailsService.loadUserByUsername(username);
 		} catch (UsernameNotFoundException e) {
-			System.err.println(e.getMessage());
 			throw new OAuth2AuthenticationException(OAuth2ErrorCodes.ACCESS_DENIED);
 		}
 		if (!user.getPassword().equals(password) || ! user.getUsername().equals(username)) {
