@@ -49,6 +49,7 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 		
 		Assert.notNull(authorizationService, "authorizationService cannot be null");
 		Assert.notNull(tokenGenerator, "TokenGenerator cannot be null");
+		Assert.notNull(userDetailsService, "UserDetailsService cannot be null");
 		this.authorizationService = authorizationService;
 		this.tokenGenerator = tokenGenerator;
 		this.userDetailsService = userDetailsService;
@@ -61,8 +62,7 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 		OAuth2ClientAuthenticationToken clientPrincipal = getAuthenticatedClientElseThrowInvalidClient(customPasswordAuthenticationToken);
 		RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
 		username = customPasswordAuthenticationToken.getUsername();
-		password = customPasswordAuthenticationToken.getPassword();
-				
+		password = customPasswordAuthenticationToken.getPassword();	
 		User user = null;
 		try {
 			user = (User) userDetailsService.loadUserByUsername(username);
@@ -76,7 +76,6 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 				.map(scope -> scope.getAuthority())
 				.filter(scope -> registeredClient.getScopes().contains(scope))
 				.collect(Collectors.toSet());
-			
 		
 		OAuth2ClientAuthenticationToken oAuth2ClientAuthenticationToken = (OAuth2ClientAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 		CustomPasswordUser customPasswordUser = new CustomPasswordUser(username, user.getAuthorities());
