@@ -1,4 +1,4 @@
-package willydekeyser.config;
+package willydekeyser.model;
 
 import java.util.Collection;
 

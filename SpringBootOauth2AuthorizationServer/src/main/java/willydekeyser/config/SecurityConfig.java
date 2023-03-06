@@ -61,6 +61,8 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
+import willydekeyser.model.CustomPasswordUser;
+
 @SuppressWarnings("deprecation")
 @Configuration
 public class SecurityConfig {
