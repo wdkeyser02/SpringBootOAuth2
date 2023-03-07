@@ -40,7 +40,7 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 	private static final String ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-5.2";
 	private final OAuth2AuthorizationService authorizationService;
 	private final UserDetailsService userDetailsService;
-	OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
+	private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
 	private String username = "";
 	private String password = "";
 	private Set<String> authorizedScopes = new HashSet<>();
@@ -71,7 +71,7 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 		} catch (UsernameNotFoundException e) {
 			throw new OAuth2AuthenticationException(OAuth2ErrorCodes.ACCESS_DENIED);
 		}
-		if (!user.getPassword().equals(password) || ! user.getUsername().equals(username)) {
+		if (!user.getPassword().equals(password) || !user.getUsername().equals(username)) {
 			throw new OAuth2AuthenticationException(OAuth2ErrorCodes.ACCESS_DENIED);
 		}
 		authorizedScopes = user.getAuthorities().stream()
@@ -79,6 +79,7 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 				.filter(scope -> registeredClient.getScopes().contains(scope))
 				.collect(Collectors.toSet());
 		
+		//-----------Create a new Security Context Holder Context----------
 		OAuth2ClientAuthenticationToken oAuth2ClientAuthenticationToken = (OAuth2ClientAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 		CustomPasswordUser customPasswordUser = new CustomPasswordUser(username, user.getAuthorities());
 		oAuth2ClientAuthenticationToken.setDetails(customPasswordUser);
@@ -87,6 +88,7 @@ public class CustomPassordAuthenticationProvider implements AuthenticationProvid
 		newcontext.setAuthentication(oAuth2ClientAuthenticationToken);
 		SecurityContextHolder.setContext(newcontext);		
 		
+		//-----------TOKEN BUILDERS----------
 		DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
 				.registeredClient(registeredClient)
 				.principal(clientPrincipal)
