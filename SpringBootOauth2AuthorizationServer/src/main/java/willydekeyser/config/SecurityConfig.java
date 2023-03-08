@@ -86,7 +86,6 @@ public class SecurityConfig {
 				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
 				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 				.build();
-
 	}
 
 	private Consumer<List<AuthenticationProvider>> getProviders() {
@@ -97,8 +96,6 @@ public class SecurityConfig {
 		return a -> a.forEach(System.out::println);
 	}
 
-
-
 	@Bean
 	@Order(2)
 	public SecurityFilterChain appSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -106,7 +103,6 @@ public class SecurityConfig {
 				.formLogin(withDefaults())
 				.authorizeHttpRequests(authorize ->authorize.anyRequest().authenticated())
 				.build();
-		
 	}
 
 	@Bean
@@ -115,7 +111,7 @@ public class SecurityConfig {
 	}
 	
 	@Bean
-	OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService() {
+	public OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService() {
 		return new InMemoryOAuth2AuthorizationConsentService();
 	}
 	
@@ -160,7 +156,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	TokenSettings tokenSettings() {
+	public TokenSettings tokenSettings() {
 		return TokenSettings.builder()
 				.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
 				.accessTokenTimeToLive(Duration.ofDays(1))
@@ -168,17 +164,17 @@ public class SecurityConfig {
 	}
 	
 	@Bean
-	ClientSettings clientSettings() {
+	public ClientSettings clientSettings() {
 		return ClientSettings.builder().build();
 	}
 	
 	@Bean
-	AuthorizationServerSettings authorizationServerSettings() {
+	public AuthorizationServerSettings authorizationServerSettings() {
 		return AuthorizationServerSettings.builder().build();
 	}
 	
 	@Bean
-	OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator() {
+	public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator() {
 		NimbusJwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkSource());
 		JwtGenerator jwtGenerator = new JwtGenerator(jwtEncoder);
 		jwtGenerator.setJwtCustomizer(tokenCustomizer());
@@ -189,7 +185,7 @@ public class SecurityConfig {
 	}
 	
 	@Bean
-	OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
+	public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
 		return context -> {
 			OAuth2ClientAuthenticationToken principal = context.getPrincipal();
 			CustomPasswordUser user = (CustomPasswordUser) principal.getDetails();
