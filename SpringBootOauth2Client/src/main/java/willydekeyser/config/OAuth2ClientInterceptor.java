@@ -4,8 +4,6 @@ package willydekeyser.config;
 import static java.util.Objects.isNull;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -13,7 +11,6 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;

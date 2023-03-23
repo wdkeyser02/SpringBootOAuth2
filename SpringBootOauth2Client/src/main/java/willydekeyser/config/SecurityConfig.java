@@ -17,8 +17,6 @@ public class SecurityConfig {
 		.cors().disable()
 			.authorizeHttpRequests(authorize -> authorize
 					.anyRequest().permitAll()) //.authenticated())
-			//.oauth2Login(oauth2Login ->
-			//	oauth2Login.loginPage("/login/oauth2/code/myoauth2"))
 			.oauth2Login(withDefaults())
 			.oauth2Client(withDefaults());
 		return http.build();
