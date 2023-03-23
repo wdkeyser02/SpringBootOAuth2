@@ -17,19 +17,8 @@ public class WelcomeController {
 	
 	@GetMapping("/")
 	public String welcome() {
-		//RestTemplate restTemplate = restTemplateBuilderConfigured.build();
-		String welcome = "WELCOME: ";//restTemplate.getForEntity("/", String.class).getBody();	
-		return "<h1>" +  welcome + "</h1>";
-	}
-	
-	@GetMapping("/test")
-	public String test() {
-		
 		RestTemplate restTemplate = restTemplateBuilderConfigured.build();
-		
-		String welcome = restTemplate.getForEntity("http://localhost:8090/", String.class).getBody();
-		System.err.println("WELCOME: " + welcome);
+		String welcome = restTemplate.getForEntity("/", String.class).getBody();	
 		return "<h1>" +  welcome + "</h1>";
 	}
-	
 }

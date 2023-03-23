@@ -44,8 +44,9 @@ public class OAuth2ClientInterceptor implements ClientHttpRequestInterceptor {
             throw new IllegalStateException("Missing credentials");
         }
 
-        System.err.println("\n\nTOKEN: " + client.getAccessToken().getTokenValue());
-        System.out.println("\n\n\n");
+        System.err.println("\nACCESS TOKEN: " + client.getAccessToken().getTokenValue());
+        System.out.println("\nREFRESH TOKEN: " + client.getRefreshToken().getTokenValue());
+        System.out.println("\nPRINCIPAL NAME: " + client.getPrincipalName());
         
         request.getHeaders().add(HttpHeaders.AUTHORIZATION,
                 "Bearer " + client.getAccessToken().getTokenValue());
