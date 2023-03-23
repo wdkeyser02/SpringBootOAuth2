@@ -16,7 +16,7 @@ public class SecurityConfig {
 		.csrf().disable()
 		.cors().disable()
 			.authorizeHttpRequests(authorize -> authorize
-					.anyRequest().permitAll()) //authenticated())
+					.anyRequest().permitAll()) //.authenticated())
 			//.oauth2Login(oauth2Login ->
 			//	oauth2Login.loginPage("/login/oauth2/code/myoauth2"))
 			.oauth2Login(withDefaults())

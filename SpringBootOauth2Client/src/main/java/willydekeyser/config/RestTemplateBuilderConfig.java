@@ -25,7 +25,6 @@ public class RestTemplateBuilderConfig {
                                             OAuth2ClientInterceptor interceptor){
 
         assert resourceServerUrl != null;
-
         return configurer.configure(new RestTemplateBuilder())
                 .additionalInterceptors(interceptor)
                 .uriTemplateHandler(new DefaultUriBuilderFactory(resourceServerUrl));
