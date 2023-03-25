@@ -34,8 +34,6 @@ public class CustomAccessTokenResponseHandler implements AuthenticationSuccessHa
         OAuth2AccessToken accessToken = accessTokenAuthentication.getAccessToken();
         OAuth2RefreshToken refreshToken = accessTokenAuthentication.getRefreshToken();
         Map<String, Object> additionalParameters = accessTokenAuthentication.getAdditionalParameters();
-        
-        System.err.println("additionalParameters: " + additionalParameters);
 
         OAuth2AccessTokenResponse.Builder builder =
                 OAuth2AccessTokenResponse.withToken(accessToken.getTokenValue())
