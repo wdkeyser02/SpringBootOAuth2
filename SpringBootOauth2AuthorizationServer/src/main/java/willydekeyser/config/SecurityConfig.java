@@ -50,7 +50,10 @@ public class SecurityConfig {
 		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
 		return http
-				.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(withDefaults())
+				.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+				.tokenEndpoint(tokenendpoint -> tokenendpoint
+						.accessTokenResponseHandler(new CustomAccessTokenResponseHandler()))
+				.oidc(withDefaults())
 				.and()
 				.exceptionHandling(e -> e
 				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
