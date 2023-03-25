@@ -58,7 +58,7 @@ public class CustomAccessTokenResponseHandler implements AuthenticationSuccessHa
 
 	private Map<String, Object> getSuccessCodeMessageMap(Map<String, Object> additionalParameters) {
         Map<String, Object> successCodeMessageMap = new HashMap<>();
-        successCodeMessageMap = additionalParameters;
+        successCodeMessageMap.putAll(additionalParameters);
         successCodeMessageMap.put("spring_boot_programming_code", 222);
         successCodeMessageMap.put("spring_boot_programming_message", "Test");
         return successCodeMessageMap;
