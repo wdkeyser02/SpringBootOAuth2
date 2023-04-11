@@ -6,7 +6,11 @@ spring:
   cloud:
     gateway:
       routes:
-      - id: resouces
+      - id: resouces01
         uri: http://localhost:8090
         predicates:
         - Path=/first/**
+      - id: resouces02
+        uri: http://localhost:8091
+        predicates:
+        - Path=/second/**

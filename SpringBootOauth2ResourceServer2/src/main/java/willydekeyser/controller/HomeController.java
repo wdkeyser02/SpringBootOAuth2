@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/first")
+@RequestMapping("/second")
 public class HomeController {
 	
 	@GetMapping("/message")
 	public String home() {
 		LocalDateTime time = LocalDateTime.now();
-		return "Welcome Home from First Server! - " + time;
+		return "Welcome Home from Second Server! - " + time;
 	}
 
 }

@@ -8,7 +8,8 @@ import org.springframework.web.service.annotation.HttpExchange;
 public interface WelcomeClient {
 
 	@GetExchange("/first/message")
-	String getWelcome();
+	String getWelcomeFirst();
 	
-	
+	@GetExchange("/second/message")
+	String getWelcomeSecond();
 }

@@ -15,8 +15,9 @@ public class WelcomeController {
 	@GetMapping("/")
 	public String welcome() {
 		
-		String welcome = welcomeClient.getWelcome();			
-		return "<h1>" +  welcome + "</h1>";
+		String welcomeFirst = welcomeClient.getWelcomeFirst();		
+		String welcomeSecond = welcomeClient.getWelcomeSecond();	
+		return "<h1>" +  welcomeFirst + "</h1><h1>" +  welcomeSecond + "</h1>";
 	}
 	
 }
