@@ -1,0 +1,12 @@
+server:
+  port: 9999
+  
+spring:
+  application.name: springcloudgateway
+  cloud:
+    gateway:
+      routes:
+      - id: resouces
+        uri: http://localhost:8090
+        predicates:
+        - Path=/first/**
