@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/first")
+@RequestMapping("/")
 public class HomeController {
 	
-	@GetMapping("/message")
+	@GetMapping("/")
 	public String home() {
 		LocalDateTime time = LocalDateTime.now();
 		return "Welcome Home from First Server! - " + time;

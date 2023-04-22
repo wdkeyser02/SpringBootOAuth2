@@ -7,9 +7,9 @@ import org.springframework.web.service.annotation.HttpExchange;
 @HttpExchange("http://localhost:9999")
 public interface WelcomeClient {
 
-	@GetExchange("/first/message")
+	@GetExchange("/first")
 	String getWelcomeFirst();
 	
-	@GetExchange("/second/message")
+	@GetExchange("/second")
 	String getWelcomeSecond();
 }
